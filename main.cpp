@@ -18,5 +18,16 @@ int main() {
     }
 
     RLIS rlis(sequence, queries);
-    rlis.run();
+    //rlis.run();
+    cout << endl;
+    // vector<int> res = rlis.backward_lis(0, 5);
+    // for (int i = 0; i < res.size(); i++) {
+    //     cout << res[i] << " ";
+    // }
+
+    query_map_t approx = rlis.two_approx();
+    for (int i = 0; i < queries.size(); i++) {
+        cout << "approx of " << queries[i].first << "," << queries[i].second << " ";
+        cout << approx[queries[i]] << endl;
+    }
 }

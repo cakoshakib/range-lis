@@ -1,7 +1,11 @@
 OUTPUT=main
 CFLAGS=-g -Wall
+CFILES=main.cpp novel/*.cpp
 
 all: main
 
-main: main.cpp novel/rlis.cpp
-	g++ $(CFLAGS) -o main main.cpp novel/rlis.cpp
+main: $(CFILES)
+	g++ $(CFLAGS) -o main $(CFILES)
+
+clean: 
+	rm main
