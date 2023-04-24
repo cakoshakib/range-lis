@@ -36,11 +36,13 @@ public:
     std::vector<int> forward_lis(int i, int j);
     std::vector<int> backward_lis(int i, int j);
     query_map_t two_approx();
+    std::vector<int> long_query(query_t query, int length, std::vector<int>& beta_samples);
 
 private:
     // Variables
     std::vector<int> seq;
     std::vector<query_t> queries;
+    int c = 1;
 
     // Primary Algorithms
 
