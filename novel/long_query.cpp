@@ -25,7 +25,7 @@ map<int, vector<int>> RLIS::beta_sample(double beta) {
         vector<int> sample_lis;
         sample_lis.reserve(bcw.size() + frw.size());
         sample_lis.insert(sample_lis.end(), bcw.begin(), bcw.end());
-        sample_lis.insert(sample_lis.end(), frw.begin(), frw.end());
+        sample_lis.insert(sample_lis.end(), frw.begin()+1, frw.end());
        
         sampled_elements[i] = sample_lis;
     }
