@@ -9,7 +9,6 @@ vector<int> RLIS::forward_lis(int lb, int ub) {
         cout << "Invalid parameters to forward_lis, j > i\n";
         exit(1);
     }
-    vector<int> seq = this->seq;
     int n = ub - lb + 1;
     vector<int> d(n+1, INF);
     d[0] = -INF;
@@ -29,7 +28,6 @@ vector<int> RLIS::backward_lis(int lb, int ub) {
         cout << "Invalid parameters to forward_lis, j > i\n";
         exit(1);
     }
-    vector<int> seq = this->seq;
     int n = ub - lb + 1;
     vector<int> d(n+1, -INF);
     d[0] = INF;

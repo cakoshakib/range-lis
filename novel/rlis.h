@@ -2,6 +2,7 @@
 #include <utility>
 #include <iostream>
 #include <map>
+#include <set>
 #define INF 1e5
 
 typedef std::map<std::pair<int,int>, int> query_map_t;
@@ -32,17 +33,19 @@ public:
 class RLIS {
 public:
     RLIS(std::vector<int> sequence, std::vector<query_t> queries);
-    std::vector<int> run();
+    std::vector<std::vector<int>> run();
     std::vector<int> forward_lis(int i, int j);
     std::vector<int> backward_lis(int i, int j);
     query_map_t two_approx();
-    std::vector<int> long_query(query_t query, int length, std::vector<int>& beta_samples);
+    std::map<int, std::vector<int>> beta_sample(double beta);
+    std::vector<int> long_query(query_t query, std::map<int, std::vector<int>> sample);
 
 private:
     // Variables
     std::vector<int> seq;
     std::vector<query_t> queries;
-    int c = 1;
+    int c = 2;
+    int n;
 
     // Primary Algorithms
 
