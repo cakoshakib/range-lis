@@ -1,3 +1,4 @@
 *.exe
 main
 .ccls
+.vscode

@@ -183,7 +183,7 @@ class RLIS(LIS):
             # Calculate B[r][beta] for all n/2+1, r
             B = {}
             for r in range(mid+1, end+1):
-                a_r = self.seq[r]https://rutgers.zoom.us/my/ks1744?pwd=YmVrd211OXE0RnVreUloWmM1Qm5EQT09
+                a_r = self.seq[r]
                 B[r] = [[] for _ in range(self.BARRIER)]
                 node.memo[r] = [[] for _ in range(self.BARRIER)]
                 for beta in range(self.BARRIER):

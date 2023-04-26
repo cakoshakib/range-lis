@@ -8,20 +8,23 @@
 typedef std::map<std::pair<int,int>, int> query_map_t;
 typedef std::pair<int,int> query_t;
 
-class ApproxNode {
+class Node {
 public:
     int mid, start, end;
-    int data;
-    ApproxNode *left, *right;
-    std::vector<int> approx;
-    ApproxNode(int start, int end) {
+    Node *left, *right;
+    std::vector<int> list;
+
+    Node(int start, int end) {
+        // Start, Mid, End of interval
         this->start = start;
         this->end = end;
         this->mid = mid_point(start, end);
+        // Left and right nodes of tree
         this->left = nullptr;
         this->right = nullptr;
-        std::vector<int> approximation(end-start+1);
-        this->approx = approximation;
+        // Actual data (list of values)
+        std::vector<int> list(end-start+1);
+        this->list= list;
     }
 
     int mid_point(int x, int y) {
@@ -30,15 +33,34 @@ public:
 
 };
 
+class ShortNode {
+public:
+    int mid, start, end;
+    ShortNode *left, *right;
+    std::vector<vector<int>> LR;
+
+    ShortNode(int start, int end) {
+        // Start, Mid, End of interval
+        this->start = start;
+        this->end = end;
+        this->mid = mid_point(start, end);
+        // Left and right nodes of tree
+        this->left = nullptr;
+        this->right = nullptr;
+    }
+
+    int mid_point(int x, int y) {
+        return x + ((y - x) / 2);
+    }
+
+}
+
 class RLIS {
 public:
     RLIS(std::vector<int> sequence, std::vector<query_t> queries);
     std::vector<std::vector<int>> run();
-    std::vector<int> forward_lis(int i, int j);
-    std::vector<int> backward_lis(int i, int j);
-    query_map_t two_approx();
-    std::map<int, std::vector<int>> beta_sample(double beta);
-    std::vector<int> long_query(query_t query, std::map<int, std::vector<int>> sample);
+    std::vector<int> short_query(query_t query);
+    Node* preprocess_dp();
 
 private:
     // Variables
@@ -47,10 +69,20 @@ private:
     int c = 2;
     int n;
 
-    // Primary Algorithms
+    // Building two approximation 
+    void build_approx_tree(Node *node);
+    int answer_approx_query(Node *node, int i, int j);
+    query_map_t two_approx();
 
-    // Helper Functions
-    void build_approx_tree(ApproxNode *node);
-    int answer_query(ApproxNode *node, int i, int j);
+    // Handling long LIS querires
+    std::vector<int> long_query(query_t query, std::map<int, std::vector<int>> sample);
+    std::map<int, std::vector<int>> beta_sample(double beta);
+
+    // Handling short LIS queries
+
+    // Standard LIS computations
+    std::vector<int> forward_lis(int i, int j);
+    std::vector<int> backward_lis(int i, int j);
+
 
 };
