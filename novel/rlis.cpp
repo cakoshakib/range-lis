@@ -7,6 +7,7 @@ RLIS::RLIS(vector<int> _sequence, vector<query_t> _queries) {
     this->seq = _sequence;
     this->queries = _queries;
     this->n = _sequence.size();
+    this->barrier = c * sqrt(n);
 }
 
 vector<vector<int>> RLIS::run() {
@@ -16,7 +17,6 @@ vector<vector<int>> RLIS::run() {
     }
     cout << "\n---\n";
     query_map_t approximation = two_approx();
-    double barrier = c * sqrt(n);
 
     // Sample Betas
     cout << "Computing Beta Samples\n";
@@ -27,6 +27,10 @@ vector<vector<int>> RLIS::run() {
         betas.push_back(beta_i);
         samples.push_back(beta_sample(beta_i));
     }
+
+    // Preprocess DP for short queries
+    ShortNode *root = new ShortNode(0, n-1);
+    preprocess_dp(root);
 
     // Get LIS for each query
     vector<vector<int>> results;

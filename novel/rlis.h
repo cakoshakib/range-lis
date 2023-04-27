@@ -37,7 +37,7 @@ class ShortNode {
 public:
     int mid, start, end;
     ShortNode *left, *right;
-    std::vector<vector<int>> LR;
+    std::map<double, std::vector<std::vector<int>>> LR;
 
     ShortNode(int start, int end) {
         // Start, Mid, End of interval
@@ -53,14 +53,14 @@ public:
         return x + ((y - x) / 2);
     }
 
-}
+};
 
 class RLIS {
 public:
     RLIS(std::vector<int> sequence, std::vector<query_t> queries);
     std::vector<std::vector<int>> run();
     std::vector<int> short_query(query_t query);
-    Node* preprocess_dp();
+    void preprocess_dp(ShortNode *node);
 
 private:
     // Variables
@@ -68,6 +68,7 @@ private:
     std::vector<query_t> queries;
     int c = 2;
     int n;
+    double barrier;
 
     // Building two approximation 
     void build_approx_tree(Node *node);
@@ -79,6 +80,18 @@ private:
     std::map<int, std::vector<int>> beta_sample(double beta);
 
     // Handling short LIS queries
+    std::vector<int> r_range_max(
+        std::map<double, std::vector<std::vector<int>>>& B,
+        ShortNode *node,
+        int r,
+        int beta
+    );
+    std::vector<int> l_range_max(
+        std::map<double, std::vector<std::vector<int>>>& C,
+        ShortNode *node,
+        int l,
+        int alpha
+    );
 
     // Standard LIS computations
     std::vector<int> forward_lis(int i, int j);
