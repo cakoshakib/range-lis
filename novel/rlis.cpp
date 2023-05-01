@@ -29,6 +29,7 @@ vector<vector<int>> RLIS::run() {
     }
 
     // Preprocess DP for short queries
+    cout << "Preprocessing DP\n";
     ShortNode *root = new ShortNode(0, n-1);
     preprocess_dp(root);
 
@@ -45,6 +46,12 @@ vector<vector<int>> RLIS::run() {
             results.push_back(long_query(q, sample));
         } else {
             cout << "Small LIS!" << endl;
+            vector<int> result = short_query(root, q);
+            cout << "Printing result...\n";
+            for (int i = 0; i < result.size(); i++) {
+                cout << result[i] << " ";
+            }
+            cout << endl;
         }
     }
 

@@ -155,7 +155,6 @@ class RLIS(LIS):
         # Build a Binary Search Tree
         n = self.n
         root = Node(0, n-1)
-        visited = set()
         def r_range_max(matrix, lb, r, beta):
             cur_max = []
             a_r = self.seq[r]
@@ -176,9 +175,6 @@ class RLIS(LIS):
 
         def rec(node):
             start, mid, end = node.start, node.mid, node.end
-            if mid in visited:
-                return
-            visited.add(mid)
 
             # Calculate B[r][beta] for all n/2+1, r
             B = {}
@@ -213,6 +209,8 @@ class RLIS(LIS):
                         node.memo[l][alpha] = node.memo[l-1][alpha]
 
             # recurse
+            if mid + 1 == end:
+                return
             node.left = Node(start, mid)
             node.right = Node(mid+1, end)
             rec(node.left), rec(node.right)

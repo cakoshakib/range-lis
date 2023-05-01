@@ -37,7 +37,7 @@ class ShortNode {
 public:
     int mid, start, end;
     ShortNode *left, *right;
-    std::map<double, std::vector<std::vector<int>>> LR;
+    std::map<double, std::map<int, std::vector<int>>> LR;
 
     ShortNode(int start, int end) {
         // Start, Mid, End of interval
@@ -80,14 +80,23 @@ private:
     std::map<int, std::vector<int>> beta_sample(double beta);
 
     // Handling short LIS queries
+    std::vector<int> short_query(ShortNode *node, query_t q);
+
+    int compatible_beta(
+        std::map<double, std::map<int, std::vector<int>>>& LR, 
+        int peak, 
+        int alpha, 
+        query_t q,
+        ShortNode *node
+    );
     std::vector<int> r_range_max(
-        std::map<double, std::vector<std::vector<int>>>& B,
+        std::map<double, std::map<int, std::vector<int>>>& B,
         ShortNode *node,
         int r,
         int beta
     );
     std::vector<int> l_range_max(
-        std::map<double, std::vector<std::vector<int>>>& C,
+        std::map<double, std::map<int, std::vector<int>>>& C,
         ShortNode *node,
         int l,
         int alpha
