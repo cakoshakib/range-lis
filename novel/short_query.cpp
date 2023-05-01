@@ -14,7 +14,11 @@ vector<int> RLIS::r_range_max(
     int a_r = seq[r];
     for (int i = (node->mid)+1; i < r; i++) {
         int a_i = seq[i];
-        if (a_i < a_r && (max_i == -1 || B[beta-1][max_i].size() == 0 || B[beta-1][i][0] > B[beta-1][max_i][0]))
+        if (a_i < a_r && (
+            max_i == -1 || 
+            B[beta-1][max_i].size() == 0 || 
+            B[beta-1][i][0] > B[beta-1][max_i][0]
+        ))
             max_i = i;
     }
     if (max_i == -1) return {};
@@ -33,7 +37,11 @@ vector<int> RLIS::l_range_max(
     int a_l = seq[l];
     for (int i = l+1; i <= node->mid; i++) {
         int a_i = seq[i];
-        if (a_i > a_l && (max_i == -1 || C[alpha-1][max_i].size() != alpha || C[alpha-1][i][alpha-2] > C[alpha-1][max_i][alpha-2]))
+        if (a_i > a_l && (
+            max_i == -1 || 
+            C[alpha-1][max_i].size() != alpha || 
+            C[alpha-1][i][alpha-2] > C[alpha-1][max_i][alpha-2]
+        ))
             max_i = i;
     }
     if (max_i == -1) return {};
@@ -71,7 +79,10 @@ void RLIS::preprocess_dp(ShortNode *node) {
             }
 
             // Update R side of LR 
-            if (r > mid+1 && (B[beta][r].size() == 0 || node->LR[beta][r-1][0] > B[beta][r][0])) {
+            if (r > mid+1 && (
+                B[beta][r].size() == 0 || 
+                node->LR[beta][r-1][0] > B[beta][r][0]
+            )) {
                 node->LR[beta][r] = node->LR[beta][r-1];
             } else {
                 node->LR[beta][r] = B[beta][r];
@@ -99,7 +110,10 @@ void RLIS::preprocess_dp(ShortNode *node) {
             cout << alpha << " " << l << endl;
             cout << C[alpha][l].size() << endl;
             cout << node->LR[alpha][l-1].size() << endl;
-            if (l > start && (C[alpha][l].size() != alpha || node->LR[alpha][l-1][alpha-1] > C[alpha][l][alpha-1])) {
+            if (l > start && (
+                C[alpha][l].size() != alpha ||
+                node->LR[alpha][l-1][alpha-1] > C[alpha][l][alpha-1]
+            )) {
                 cout << "here\n";
                 node->LR[alpha][l] = node->LR[alpha][l-1];
             } else {
