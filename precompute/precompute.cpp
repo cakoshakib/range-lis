@@ -23,7 +23,7 @@ map<query_t, int> LISPre::all_lis() {
     for (int start = 0; start < n; start++) {
         vector<int> res = lis(start);
         for (int end = start; end < n; end++) { 
-            cout << "Query answer (" << start << "," << end << ") " << res[end-start] << endl; 
+            //cout << "Query answer (" << start << "," << end << ") " << res[end-start] << endl; 
             q_ans[{start, end}] = res[end-start];
         }
     }

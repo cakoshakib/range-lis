@@ -1,11 +1,13 @@
 #include <iostream>
 #include "novel/rlis.h"
 #include "precompute/precompute.h"
+#include "live/live.h"
 using namespace std;
 
-void print_2d(vector<vector<int>>& res) {
-    for (vector<int> v : res) {
-        for (int x : v) {
+void print_result(vector<query_t>& queries, vector<vector<int>>& res) {
+    for (unsigned int i = 0; i < queries.size(); i++) {
+        cout << "Query (" << queries[i].first << "," << queries[i].second << "): ";
+        for (int x : res[i]) {
             cout << x << " ";
         }
         cout << endl;
@@ -28,8 +30,16 @@ int main() {
     // RLIS rlis(sequence, queries);
     // vector<vector<int>> rlis_result = rlis.run();
     
+    cout << "----PRECOMPUTE----\n";
     LISPre pre(sequence, queries);
     vector<vector<int>> pre_result = pre.run();
-    print_2d(pre_result);
+    print_result(queries, pre_result);
+    cout << "--------\n";
+
+    cout << "----LIVE----\n";
+    LISLive live(sequence, queries);
+    vector<vector<int>> live_result = live.run();
+    print_result(queries, live_result);
+    cout << "--------\n";
 
 }
