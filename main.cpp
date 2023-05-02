@@ -27,14 +27,17 @@ int main() {
         cin >> queries[i].first >> queries[i].second;
     }
 
-    // RLIS rlis(sequence, queries);
-    // vector<vector<int>> rlis_result = rlis.run();
-    
-    cout << "----PRECOMPUTE----\n";
-    LISPre pre(sequence, queries);
-    vector<vector<int>> pre_result = pre.run();
-    print_result(queries, pre_result);
+    cout << "----NOVEL----\n";
+    RLIS rlis(sequence, queries);
+    vector<vector<int>> rlis_result = rlis.run();
+    print_result(queries, rlis_result);
     cout << "--------\n";
+    
+    // cout << "----PRECOMPUTE----\n";
+    // LISPre pre(sequence, queries);
+    // vector<vector<int>> pre_result = pre.run();
+    // print_result(queries, pre_result);
+    // cout << "--------\n";
 
     cout << "----LIVE----\n";
     LISLive live(sequence, queries);

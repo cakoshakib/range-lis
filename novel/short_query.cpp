@@ -9,14 +9,13 @@ vector<int> RLIS::r_range_max(
     int r,
     unsigned int beta
 ) {
-    cout << beta << " " << r << " " << node->mid+1 << endl;
     int max_i = -1;
     int a_r = seq[r];
     for (int i = (node->mid)+1; i < r; i++) {
         int a_i = seq[i];
-        if (a_i < a_r && (
+        if (a_i < a_r && 
+            B[beta-1][i].size() == beta-1 && (
             max_i == -1 || 
-            B[beta-1][max_i].size() == 0 || 
             B[beta-1][i][0] > B[beta-1][max_i][0]
         ))
             max_i = i;
@@ -37,23 +36,25 @@ vector<int> RLIS::l_range_max(
     int a_l = seq[l];
     for (int i = l+1; i <= node->mid; i++) {
         int a_i = seq[i];
-        if (a_i > a_l && (
+        if (a_i > a_l && 
+            C[alpha-1][i].size() == alpha-1 && (
             max_i == -1 || 
-            C[alpha-1][max_i].size() != alpha || 
-            C[alpha-1][i][alpha-2] > C[alpha-1][max_i][alpha-2]
+            C[alpha-1][i][alpha-2] < C[alpha-1][max_i][alpha-2]
         ))
             max_i = i;
     }
     if (max_i == -1) return {};
-    vector<int> longest = C[alpha-1][max_i];
-    longest.push_back(a_l);
+    vector<int> longest(alpha);
+    longest[0] = a_l;
+    for (int i = 1; i < alpha; i++) {
+        longest[i] = C[alpha-1][max_i][i-1];
+    }
     return longest;
 }
 
 void RLIS::preprocess_dp(ShortNode *node) {
     int start = node->start, mid = node->mid, end = node->end;
     node->LR = map<double, map<int, vector<int>>>();
-    cout << start << " " << mid << " " << end << endl;
 
     // TODO: probably doing some accidental O(n) ops here
 
@@ -68,18 +69,26 @@ void RLIS::preprocess_dp(ShortNode *node) {
             node->LR[beta][r].resize(beta);
             if (beta == 1) {
                 cout << "Setting B[" << beta << "][" << r << "] to " << a_r << endl;
-                cout << B[beta][r].size() << endl;
                 B[beta][r] = {a_r};
-                cout << B[beta][r][0] << endl;
                 cout << "Done\n";
             } else {
                 cout << "Entered r_range_max\n";
                 B[beta][r] = r_range_max(B, node, r, beta);
+                cout << "Setting B[" << beta << "][" << r << "] to ";
+                if (B[beta][r].size() == 0)  {
+                    cout << "NONE\n";
+                } else {
+                    for (int i = 0; i < B[beta][r].size(); i++) {
+                        cout << B[beta][r][i] << ",";
+                    }
+                    cout << endl;
+                }
                 cout << "Exiting\n";
             }
 
             // Update R side of LR 
-            if (r > mid+1 && (
+            if (r > mid+1 && 
+                node->LR[beta][r-1].size() == beta && (
                 B[beta][r].size() == 0 || 
                 node->LR[beta][r-1][0] > B[beta][r][0]
             )) {
@@ -93,7 +102,7 @@ void RLIS::preprocess_dp(ShortNode *node) {
     // Compute C[l][alpha] for all [1, n/2]
     map<double, map<int, vector<int>>> C;
     for (unsigned int alpha = 1; alpha < ceil(barrier); alpha++) {
-        for (int l = start; l <= mid; l++) {
+        for (int l = mid; l >= start; l--) {
             int a_l = seq[l];
             C[alpha][l].resize(alpha);
             node->LR[alpha][l].resize(alpha);
@@ -103,26 +112,36 @@ void RLIS::preprocess_dp(ShortNode *node) {
             } else {
                 cout << "Entered l_range_max\n";
                 C[alpha][l] = l_range_max(C, node, l, alpha);
+                cout << "Setting C[" << alpha << "][" << l << "] to ";
+                if (C[alpha][l].size() == 0)  {
+                    cout << "NONE\n";
+                } else {
+                    for (int i = 0; i < C[alpha][l].size(); i++) {
+                        cout << C[alpha][l][i] << ",";
+                    }
+                    cout << endl;
+                }
                 cout << "Exiting\n";
             }
 
-            // Update R side of LR 
-            cout << alpha << " " << l << endl;
-            cout << C[alpha][l].size() << endl;
-            cout << node->LR[alpha][l-1].size() << endl;
-            if (l > start && (
+            // Update L side of LR 
+            if (l < mid && 
+                node->LR[alpha][l+1].size() == alpha && (
                 C[alpha][l].size() != alpha ||
-                node->LR[alpha][l-1][alpha-1] > C[alpha][l][alpha-1]
+                node->LR[alpha][l+1][alpha-1] < C[alpha][l][alpha-1]
             )) {
-                cout << "here\n";
-                node->LR[alpha][l] = node->LR[alpha][l-1];
+                node->LR[alpha][l] = node->LR[alpha][l+1];
             } else {
                 node->LR[alpha][l] = C[alpha][l];
             }
+            cout << "Setting LR[" << alpha << "][" << l << "] to ";
+            for (int i = 0; i < C[alpha][l].size(); i++) {
+                cout << C[alpha][l][i] << ",";
+            }
+            cout << endl;
         }
 
     }
-
     if (mid+1 == end) return;
 
     node->left = new ShortNode(start, mid);
@@ -138,18 +157,13 @@ int RLIS::compatible_beta(
     ShortNode *node
 ) {
     int r = q.second;
-    int best_beta = 0;
-    int longest_length = 0;
+    int best_beta = 1;
     // binary search 
     int lo = 1, hi = min((int)ceil(barrier), node->end - node->mid + 1);
     while (lo < hi) {
         int beta = (lo + hi) / 2;
-        if (peak < LR[beta][r][0]) {
-            int ln = LR[beta][r].size();
-            if (longest_length > ln) {
-                best_beta = beta;
-                longest_length = ln;
-            }
+        if (LR[beta][r].size() > 0 && peak < LR[beta][r][0]) {
+            best_beta = beta;
             lo = beta + 1;
         } else {
             hi = beta;
@@ -176,12 +190,8 @@ vector<int> RLIS::short_query(ShortNode *node, query_t q) {
             }
         }
         int alpha = alpha_beta.first, beta = alpha_beta.second;
-        // cout << "Reached\n";
-        // cout << longest_alpha_beta << endl;
-        // cout << alpha_beta.first << " " << alpha_beta.second << endl;
-        // cout << LR[alpha][i].size() << " " << LR[beta][j].size() << endl;
+
         vector<int> result;
-        cout << LR[alpha][i][0] << endl;
         result.reserve(longest_alpha_beta);
         result.insert(
             result.end(), 
