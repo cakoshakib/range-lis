@@ -7,7 +7,7 @@ vector<int> RLIS::r_range_max(
     map<double, map<int, vector<int>>>& B,
     ShortNode *node,
     int r,
-    int beta
+    unsigned int beta
 ) {
     cout << beta << " " << r << " " << node->mid+1 << endl;
     int max_i = -1;
@@ -31,7 +31,7 @@ vector<int> RLIS::l_range_max(
     map<double, map<int, vector<int>>>& C,
     ShortNode *node,
     int l,
-    int alpha 
+    unsigned int alpha 
 ) {
     int max_i = -1;
     int a_l = seq[l];
@@ -59,7 +59,7 @@ void RLIS::preprocess_dp(ShortNode *node) {
 
     // Compute B[r][beta] for all [n/2+1, r]
     map<double, map<int, vector<int>>> B;
-    for (int beta = 1; beta < ceil(barrier); beta++) {
+    for (unsigned int beta = 1; beta < ceil(barrier); beta++) {
         cout << "Working on beta " << beta << " " << end-start+1 << endl;
         for (int r = mid+1; r <= end; r++) {
             cout << "r " << r << endl;
@@ -92,7 +92,7 @@ void RLIS::preprocess_dp(ShortNode *node) {
 
     // Compute C[l][alpha] for all [1, n/2]
     map<double, map<int, vector<int>>> C;
-    for (int alpha = 1; alpha < ceil(barrier); alpha++) {
+    for (unsigned int alpha = 1; alpha < ceil(barrier); alpha++) {
         for (int l = start; l <= mid; l++) {
             int a_l = seq[l];
             C[alpha][l].resize(alpha);
@@ -133,14 +133,14 @@ void RLIS::preprocess_dp(ShortNode *node) {
 int RLIS::compatible_beta(
     map<double, map<int, vector<int>>>& LR, 
     int peak, 
-    int alpha, 
+    unsigned int alpha, 
     query_t q,
     ShortNode *node
 ) {
     int r = q.second;
     int best_beta = 0;
     int longest_length = 0;
-    // binary saerch
+    // binary search 
     int lo = 1, hi = min((int)ceil(barrier), node->end - node->mid + 1);
     while (lo < hi) {
         int beta = (lo + hi) / 2;
@@ -164,7 +164,7 @@ vector<int> RLIS::short_query(ShortNode *node, query_t q) {
         map<double, map<int, vector<int>>> LR = node->LR;
         pair<int, int> alpha_beta;
         int longest_alpha_beta = 0;
-        for (int alpha = 1; alpha < ceil(barrier); alpha++) {
+        for (unsigned int alpha = 1; alpha < ceil(barrier); alpha++) {
             if (LR[alpha][i].size() != alpha) continue;
             int peak = LR[alpha][i][alpha-1];
             // Find corresponding beta to maximize alpha + beta

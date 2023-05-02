@@ -1,6 +1,6 @@
 OUTPUT=main
 CFLAGS=-g -Wall
-CFILES=main.cpp novel/*.cpp
+CFILES=main.cpp novel/*.cpp precompute/*.cpp
 
 all: main
 

@@ -85,7 +85,7 @@ private:
     int compatible_beta(
         std::map<double, std::map<int, std::vector<int>>>& LR, 
         int peak, 
-        int alpha, 
+        unsigned int alpha, 
         query_t q,
         ShortNode *node
     );
@@ -93,13 +93,13 @@ private:
         std::map<double, std::map<int, std::vector<int>>>& B,
         ShortNode *node,
         int r,
-        int beta
+        unsigned int beta
     );
     std::vector<int> l_range_max(
         std::map<double, std::map<int, std::vector<int>>>& C,
         ShortNode *node,
         int l,
-        int alpha
+        unsigned int alpha
     );
 
     // Standard LIS computations

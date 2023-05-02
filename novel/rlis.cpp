@@ -48,7 +48,7 @@ vector<vector<int>> RLIS::run() {
             cout << "Small LIS!" << endl;
             vector<int> result = short_query(root, q);
             cout << "Printing result...\n";
-            for (int i = 0; i < result.size(); i++) {
+            for (unsigned int i = 0; i < result.size(); i++) {
                 cout << result[i] << " ";
             }
             cout << endl;
