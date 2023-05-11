@@ -13,6 +13,8 @@ public:
     int mid, start, end;
     Node *left, *right;
     std::vector<int> list;
+    std::vector<int> l1;
+    std::vector<std::pair<int,int>> l2;
 
     Node(int start, int end) {
         // Start, Mid, End of interval
@@ -85,16 +87,22 @@ private:
     int compatible_beta(
         std::map<double, std::map<int, std::vector<int>>>& LR, 
         int peak, 
-        unsigned int alpha, 
         query_t q,
         ShortNode *node
     );
+    void r_range_tree(Node *node, std::map<int, std::vector<int>>& B);
     std::vector<int> r_range_max(
         std::map<double, std::map<int, std::vector<int>>>& B,
         ShortNode *node,
         int r,
         unsigned int beta
     );
+    int r_range_max_tree(Node *node, int r);
+
+    void l_range_tree(Node *node, std::map<int, std::vector<int>>& C_alpha, unsigned int alpha);
+    int l_range_max_tree(Node *node, int l);
+
+    void l_range_tree(Node *node);
     std::vector<int> l_range_max(
         std::map<double, std::map<int, std::vector<int>>>& C,
         ShortNode *node,

@@ -1,6 +1,7 @@
 #include "rlis.h"
 #include <math.h>
 #include <algorithm>
+#include <limits>
 using namespace std;
 
 vector<int> RLIS::r_range_max(
@@ -24,6 +25,108 @@ vector<int> RLIS::r_range_max(
     vector<int> longest = B[beta-1][max_i];
     longest.push_back(a_r);
     return longest;
+}
+
+void RLIS::r_range_tree(Node *node, map<int, vector<int>>& B_beta) {
+    // Construct tree that allows for log(n) r_range_max computation
+    int start = node->start, mid = node->mid, end = node->end;
+    // maximum base 
+    // sort points
+    vector<pair<int,int>> sorted_seq;
+    for (int i = start; i <= mid; i++) sorted_seq.push_back({seq[i], i});
+    sort(sorted_seq.begin(), sorted_seq.end());
+
+    for (int i = 0; i <= mid-start; i++) {
+        int index = sorted_seq[i].second;
+        if (B_beta[index].size() == 0) continue;
+        node->l2.push_back(sorted_seq[i]);
+        if (node->l1.size() > 0 && B_beta[index][0] < node->l1[node->l1.size()-1])
+            node->l1.push_back(node->l1[node->l1.size()-1]);
+        else
+            node->l1.push_back(B_beta[index][0]);
+    }
+    // recurse
+    if (start <= mid-1) {
+        node->left = new Node(start, mid-1);
+        r_range_tree(node->left, B_beta);
+    }
+    if (mid+1 <= end) {
+        node->right = new Node(mid+1, end);
+        r_range_tree(node->right, B_beta);
+    }
+}
+
+int RLIS::r_range_max_tree(Node *node, int r) {
+    int ret = -1;
+    int mx_base = -1e5;
+    while (node != nullptr) {
+        if (node->mid < r) {
+            pair<int,int> x = {seq[r], 1e5};
+            int i = lower_bound(node->l2.begin(), node->l2.end(), x) - node->l2.begin() - 1;
+            
+            if (i != -1 && node->l1[i] >= mx_base) {
+                mx_base = node->l1[i];
+                ret = node->l2[i].second;
+            }
+            node = node->right;
+        } else {
+            node = node->left;
+        }
+    }
+    return ret;
+}
+
+void RLIS::l_range_tree(Node *node, map<int, vector<int>>& C_alpha, unsigned int alpha) {
+    // Construct tree that allows for log(n) l_range_max computation
+    // need the minimum peak 
+    int start = node->start, mid = node->mid, end = node->end;
+
+    // sort points
+    vector<pair<int,int>> sorted_seq;
+    for (int i = mid; i <= end; i++) sorted_seq.push_back({seq[i], i});
+    sort(sorted_seq.begin(), sorted_seq.end());
+
+    for (int i = 0; i <= end-mid; i++) {
+        int index = sorted_seq[i].second;
+        if (C_alpha[index].size() != alpha) continue;
+
+        node->l2.push_back(sorted_seq[i]);
+
+        if (node->l1.size() > 0 && C_alpha[index][alpha-1] > node->l1[node->l1.size()-1])
+            node->l1.push_back(node->l1[node->l1.size()-1]);
+        else
+            node->l1.push_back(C_alpha[index][alpha-1]);
+    }
+
+    // recurse
+    if (start <= mid-1) {
+        node->left = new Node(start, mid-1);
+        l_range_tree(node->left, C_alpha, alpha);
+    }
+    if (mid+1 <= end) {
+        node->right = new Node(mid+1, end);
+        l_range_tree(node->right, C_alpha, alpha);
+    }
+}
+
+int RLIS::l_range_max_tree(Node *node, int l) {
+    int ret = -1;
+    int min_peak = 1e5;
+    while (node != nullptr) {
+        if (node->mid > l) {
+            pair<int,int> x = {seq[l], -1e9};
+            int i = upper_bound(node->l2.begin(), node->l2.end(), x) - node->l2.begin();
+            
+            if (i != node->l1.size() && node->l1[i] < min_peak) {
+                min_peak = node->l1[i];
+                ret = node->l2[i].second;
+            }
+            node = node->left;
+        } else {
+            node = node->right;
+        }
+    }
+    return ret;
 }
 
 vector<int> RLIS::l_range_max(
@@ -62,18 +165,28 @@ void RLIS::preprocess_dp(ShortNode *node) {
     map<double, map<int, vector<int>>> B;
     for (unsigned int beta = 1; beta < ceil(barrier); beta++) {
         cout << "Working on beta " << beta << " " << end-start+1 << endl;
+        Node *mx_tree = new Node(mid+1, end);
+        if (beta > 1)
+            r_range_tree(mx_tree, B[beta-1]);
         for (int r = mid+1; r <= end; r++) {
-            cout << "r " << r << endl;
+            cout << "---\n";
             int a_r = seq[r];
             B[beta][r].resize(beta);
             node->LR[beta][r].resize(beta);
             if (beta == 1) {
                 cout << "Setting B[" << beta << "][" << r << "] to " << a_r << endl;
                 B[beta][r] = {a_r};
-                cout << "Done\n";
             } else {
                 cout << "Entered r_range_max\n";
-                B[beta][r] = r_range_max(B, node, r, beta);
+                int i = r_range_max_tree(mx_tree, r);
+                if (i == -1) {
+                    B[beta][r] = {};
+                } else {
+                    B[beta][r] = B[beta-1][i];
+                    B[beta][r].push_back(a_r);
+                }
+
+
                 cout << "Setting B[" << beta << "][" << r << "] to ";
                 if (B[beta][r].size() == 0)  {
                     cout << "NONE\n";
@@ -83,7 +196,6 @@ void RLIS::preprocess_dp(ShortNode *node) {
                     }
                     cout << endl;
                 }
-                cout << "Exiting\n";
             }
 
             // Update R side of LR 
@@ -102,7 +214,11 @@ void RLIS::preprocess_dp(ShortNode *node) {
     // Compute C[l][alpha] for all [1, n/2]
     map<double, map<int, vector<int>>> C;
     for (unsigned int alpha = 1; alpha < ceil(barrier); alpha++) {
+        Node *mn_tree = new Node(start, mid);
+        if (alpha > 1) 
+            l_range_tree(mn_tree, C[alpha-1], alpha-1);
         for (int l = mid; l >= start; l--) {
+            cout << "---\n";
             int a_l = seq[l];
             C[alpha][l].resize(alpha);
             node->LR[alpha][l].resize(alpha);
@@ -111,7 +227,16 @@ void RLIS::preprocess_dp(ShortNode *node) {
                 C[alpha][l] = {a_l};
             } else {
                 cout << "Entered l_range_max\n";
-                C[alpha][l] = l_range_max(C, node, l, alpha);
+                int i = l_range_max_tree(mn_tree, l);
+                cout << "Combining with i " << i << endl;
+                if (i == -1) {
+                    C[alpha][l] = {};
+                } else {
+                    C[alpha][l][0] = a_l;
+                    for (int p = 0; p < C[alpha-1][i].size(); p++) 
+                        C[alpha][l][p+1] = C[alpha-1][i][p];
+                }
+
                 cout << "Setting C[" << alpha << "][" << l << "] to ";
                 if (C[alpha][l].size() == 0)  {
                     cout << "NONE\n";
@@ -121,7 +246,6 @@ void RLIS::preprocess_dp(ShortNode *node) {
                     }
                     cout << endl;
                 }
-                cout << "Exiting\n";
             }
 
             // Update L side of LR 
@@ -152,12 +276,11 @@ void RLIS::preprocess_dp(ShortNode *node) {
 int RLIS::compatible_beta(
     map<double, map<int, vector<int>>>& LR, 
     int peak, 
-    unsigned int alpha, 
     query_t q,
     ShortNode *node
 ) {
     int r = q.second;
-    int best_beta = 1;
+    int best_beta = 0;
     // binary search 
     int lo = 1, hi = min((int)ceil(barrier), node->end - node->mid + 1);
     while (lo < hi) {
@@ -176,33 +299,39 @@ vector<int> RLIS::short_query(ShortNode *node, query_t q) {
     int i = q.first, j = q.second;
     if (i <= node->mid && node->mid < j) {
         map<double, map<int, vector<int>>> LR = node->LR;
-        pair<int, int> alpha_beta;
-        int longest_alpha_beta = 0;
-        for (unsigned int alpha = 1; alpha < ceil(barrier); alpha++) {
+        // Alpha = 0
+        unsigned int alpha = 0, beta = compatible_beta(LR, -1e5, q, node);
+        int longest_alpha_beta = LR[beta][j].size();
+        pair<int, int> alpha_beta = {0, beta};
+
+        // 1 <= alpha < c*sqrt(n)
+        for (alpha = 1; alpha < ceil(barrier); alpha++) {
             if (LR[alpha][i].size() != alpha) continue;
             int peak = LR[alpha][i][alpha-1];
             // Find corresponding beta to maximize alpha + beta
-            int beta = compatible_beta(LR, peak, alpha, q, node);
-            int ln = LR[alpha][i].size() + LR[beta][j].size();
+            int beta = compatible_beta(LR, peak, q, node);
+            int ln = beta != 0 ? LR[alpha][i].size() + LR[beta][j].size() : LR[alpha][i].size();
             if (ln > longest_alpha_beta) {
                 alpha_beta = {alpha, beta};
                 longest_alpha_beta = ln;
             }
         }
-        int alpha = alpha_beta.first, beta = alpha_beta.second;
+        alpha = alpha_beta.first, beta = alpha_beta.second;
 
         vector<int> result;
         result.reserve(longest_alpha_beta);
-        result.insert(
-            result.end(), 
-            LR[alpha][i].begin(), 
-            LR[alpha][i].end()
-        );
-        result.insert(
-            result.end(),
-            LR[beta][j].begin(),
-            LR[beta][j].end()
-        );
+        if (alpha != 0)
+            result.insert(
+                result.end(), 
+                LR[alpha][i].begin(), 
+                LR[alpha][i].end()
+            );
+        if (beta != 0)
+            result.insert(
+                result.end(),
+                LR[beta][j].begin(),
+                LR[beta][j].end()
+            );
         return result;
     } else if (j <= node->mid) {
         return short_query(node->left, q);
