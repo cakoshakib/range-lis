@@ -27,11 +27,11 @@ int main() {
         cin >> queries[i].first >> queries[i].second;
     }
 
-    cout << "----NOVEL----\n";
-    RLIS rlis(sequence, queries);
-    vector<vector<int>> rlis_result = rlis.run();
-    print_result(queries, rlis_result);
-    cout << "--------\n";
+    // cout << "----NOVEL----\n";
+    // RLIS rlis(sequence, queries);
+    // vector<vector<int>> rlis_result = rlis.run();
+    // print_result(queries, rlis_result);
+    // cout << "--------\n";
     
     // cout << "----PRECOMPUTE----\n";
     // LISPre pre(sequence, queries);

@@ -115,7 +115,7 @@ int RLIS::l_range_max_tree(Node *node, int l) {
     while (node != nullptr) {
         if (node->mid > l) {
             pair<int,int> x = {seq[l], -1e9};
-            int i = upper_bound(node->l2.begin(), node->l2.end(), x) - node->l2.begin();
+            unsigned int i = upper_bound(node->l2.begin(), node->l2.end(), x) - node->l2.begin();
             
             if (i != node->l1.size() && node->l1[i] < min_peak) {
                 min_peak = node->l1[i];
@@ -149,7 +149,7 @@ vector<int> RLIS::l_range_max(
     if (max_i == -1) return {};
     vector<int> longest(alpha);
     longest[0] = a_l;
-    for (int i = 1; i < alpha; i++) {
+    for (unsigned int i = 1; i < alpha; i++) {
         longest[i] = C[alpha-1][max_i][i-1];
     }
     return longest;
@@ -191,7 +191,7 @@ void RLIS::preprocess_dp(ShortNode *node) {
                 if (B[beta][r].size() == 0)  {
                     cout << "NONE\n";
                 } else {
-                    for (int i = 0; i < B[beta][r].size(); i++) {
+                    for (unsigned int i = 0; i < B[beta][r].size(); i++) {
                         cout << B[beta][r][i] << ",";
                     }
                     cout << endl;
@@ -233,7 +233,7 @@ void RLIS::preprocess_dp(ShortNode *node) {
                     C[alpha][l] = {};
                 } else {
                     C[alpha][l][0] = a_l;
-                    for (int p = 0; p < C[alpha-1][i].size(); p++) 
+                    for (unsigned int p = 0; p < C[alpha-1][i].size(); p++) 
                         C[alpha][l][p+1] = C[alpha-1][i][p];
                 }
 
@@ -241,7 +241,7 @@ void RLIS::preprocess_dp(ShortNode *node) {
                 if (C[alpha][l].size() == 0)  {
                     cout << "NONE\n";
                 } else {
-                    for (int i = 0; i < C[alpha][l].size(); i++) {
+                    for (unsigned int i = 0; i < C[alpha][l].size(); i++) {
                         cout << C[alpha][l][i] << ",";
                     }
                     cout << endl;
@@ -259,7 +259,7 @@ void RLIS::preprocess_dp(ShortNode *node) {
                 node->LR[alpha][l] = C[alpha][l];
             }
             cout << "Setting LR[" << alpha << "][" << l << "] to ";
-            for (int i = 0; i < C[alpha][l].size(); i++) {
+            for (unsigned int i = 0; i < C[alpha][l].size(); i++) {
                 cout << C[alpha][l][i] << ",";
             }
             cout << endl;
