@@ -1,3 +1,6 @@
+#ifndef PRECOMPUTE_H
+#define PRECOMPUTE_H
+#include "../utility.h"
 #include <vector>
 #include <map>
 #define INF 1e5
@@ -13,8 +16,10 @@ public:
 private:
     std::vector<int> seq;
     std::vector<query_t> queries;
-    int n;
+    unsigned int n;
 
-    std::map<query_t, int> all_lis();
-    std::vector<int> lis(int lb);
+    std::map<query_t, std::vector<int>> all_lis();
+    std::vector<PatienceNode*> lis(unsigned int lb);
+    unsigned int stack_search(std::vector<PatienceNode*>& stack_tops, int x);
 };
+#endif

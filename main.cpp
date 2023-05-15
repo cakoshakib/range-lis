@@ -33,16 +33,16 @@ int main() {
     // print_result(queries, rlis_result);
     // cout << "--------\n";
     
-    // cout << "----PRECOMPUTE----\n";
-    // LISPre pre(sequence, queries);
-    // vector<vector<int>> pre_result = pre.run();
-    // print_result(queries, pre_result);
-    // cout << "--------\n";
-
-    cout << "----LIVE----\n";
-    LISLive live(sequence, queries);
-    vector<vector<int>> live_result = live.run();
-    print_result(queries, live_result);
+    cout << "----PRECOMPUTE----\n";
+    LISPre pre(sequence, queries);
+    vector<vector<int>> pre_result = pre.run();
+    print_result(queries, pre_result);
     cout << "--------\n";
+
+    // cout << "----LIVE----\n";
+    // LISLive live(sequence, queries);
+    // vector<vector<int>> live_result = live.run();
+    // print_result(queries, live_result);
+    // cout << "--------\n";
 
 }
