@@ -6,7 +6,7 @@ public:
     PatienceNode *next;
     PatienceNode(int val) {
         this->val = val;
-        ln = 0;
+        ln = 1;
         next = nullptr;
     }
 };

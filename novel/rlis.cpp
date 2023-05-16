@@ -21,7 +21,7 @@ vector<vector<int>> RLIS::run() {
     // Sample Betas
     cout << "Computing Beta Samples\n";
     vector<double> betas;
-    vector<map<int, vector<int>>> samples;
+    vector<map<int, vector<PatienceNode*>>> samples;
     for (int i = 0; i < log(n); i++) {
         double beta_i = barrier * pow(2, i);
         betas.push_back(beta_i);
@@ -32,7 +32,7 @@ vector<vector<int>> RLIS::run() {
     // Preprocess DP for short queries
     cout << "Preprocessing DP\n";
     ShortNode *root = new ShortNode(0, n-1);
-    preprocess_dp(root);
+    // preprocess_dp(root);
     cout << endl;
 
     // Get LIS for each query
@@ -44,8 +44,7 @@ vector<vector<int>> RLIS::run() {
         if (2*approx > barrier) {
             cout << "Long LIS!" << endl;
             int beta_index = lower_bound(betas.begin(), betas.end(), approx) - betas.begin();
-            map<int, vector<int>> sample = samples[beta_index];
-            results.push_back(long_query(q, sample));
+            results.push_back(long_query(q, samples[beta_index]));
         } else {
             cout << "Small LIS!" << endl;
             vector<int> result = short_query(root, q);

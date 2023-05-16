@@ -1,3 +1,4 @@
+#include "../utility.h"
 #include <vector>
 #include <utility>
 #include <iostream>
@@ -63,6 +64,9 @@ public:
     std::vector<std::vector<int>> run();
     std::vector<int> short_query(query_t query);
     void preprocess_dp(ShortNode *node);
+    // Standard LIS computations
+    std::vector<PatienceNode*> forward_lis(unsigned int lb, unsigned int ub);
+    std::vector<PatienceNode*> backward_lis(int lb, int ub);
 
 private:
     // Variables
@@ -78,8 +82,10 @@ private:
     query_map_t two_approx();
 
     // Handling long LIS querires
-    std::vector<int> long_query(query_t query, std::map<int, std::vector<int>> sample);
-    std::map<int, std::vector<int>> beta_sample(double beta);
+    std::vector<int> long_query(query_t query, std::map<int, std::vector<PatienceNode*>> sample);
+    std::map<int, std::vector<PatienceNode*>> beta_sample(double beta);
+    unsigned int stack_search(std::vector<PatienceNode*>& stack_tops, int x);
+    unsigned int bkw_stack_search(std::vector<PatienceNode*>& stack_tops, int x);
 
     // Handling short LIS queries
     std::vector<int> short_query(ShortNode *node, query_t q);
@@ -110,9 +116,6 @@ private:
         unsigned int alpha
     );
 
-    // Standard LIS computations
-    std::vector<int> forward_lis(int i, int j);
-    std::vector<int> backward_lis(int i, int j);
 
 
 };
