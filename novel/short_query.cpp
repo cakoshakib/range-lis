@@ -39,21 +39,17 @@ void RLIS::r_range_tree(Node *node, map<int, PatienceNode*>& B_beta) {
     for (int i = 0; i <= mid-start; i++) {
         int index = sorted_seq[i].second;
         if (!B_beta[index]) continue;
-        node->l2.push_back(sorted_seq[i]);
-        if (node->l1.size() > 0 && B_beta[index]->val < node->l1[node->l1.size()-1])
-            node->l1.push_back(node->l1[node->l1.size()-1]);
-        else
-            node->l1.push_back(B_beta[index]->val);
+        if (node->l1.size() == 0 || B_beta[index]->base > node->l1[node->l1.size()-1]) {
+            node->l1.push_back(B_beta[index]->base);
+            node->l2.push_back(sorted_seq[i]);
+        }
     }
     // recurse
-    if (start <= mid-1) {
-        node->left = new Node(start, mid-1);
-        r_range_tree(node->left, B_beta);
-    }
-    if (mid+1 <= end) {
-        node->right = new Node(mid+1, end);
-        r_range_tree(node->right, B_beta);
-    }
+    if (mid+1 >= end) return;
+    node->left = new Node(start, mid-1);
+    node->right = new Node(mid+1, end);
+    r_range_tree(node->left, B_beta);
+    r_range_tree(node->right, B_beta);
 }
 
 int RLIS::r_range_max_tree(Node *node, int r) {
@@ -64,7 +60,7 @@ int RLIS::r_range_max_tree(Node *node, int r) {
             pair<int,int> x = {seq[r], 1e5};
             int i = lower_bound(node->l2.begin(), node->l2.end(), x) - node->l2.begin() - 1;
             
-            if (i != -1 && node->l1[i] >= mx_base) {
+            if (i != -1 && node->l1[i] > mx_base) {
                 mx_base = node->l1[i];
                 ret = node->l2[i].second;
             }
@@ -89,24 +85,18 @@ void RLIS::l_range_tree(Node *node, map<int, PatienceNode*>& C_alpha, int alpha)
     for (int i = 0; i <= end-mid; i++) {
         int index = sorted_seq[i].second;
         if (!C_alpha[index]) continue;
-
-        node->l2.push_back(sorted_seq[i]);
-
-        if (node->l1.size() > 0 && C_alpha[index]->peak > node->l1[node->l1.size()-1])
-            node->l1.push_back(node->l1[node->l1.size()-1]);
-        else
+        if (node->l1.size() == 0 || C_alpha[index]->peak > node->l1[node->l1.size()-1]) {
             node->l1.push_back(C_alpha[index]->peak);
+            node->l2.push_back(sorted_seq[i]);
+        }
     }
 
     // recurse
-    if (start <= mid-1) {
-        node->left = new Node(start, mid-1);
-        l_range_tree(node->left, C_alpha, alpha);
-    }
-    if (mid+1 <= end) {
-        node->right = new Node(mid+1, end);
-        l_range_tree(node->right, C_alpha, alpha);
-    }
+    if (mid+1 >= end) return;
+    node->left = new Node(start, mid);
+    node->right = new Node(mid+1, end);
+    l_range_tree(node->right, C_alpha, alpha);
+    l_range_tree(node->left, C_alpha, alpha);
 }
 
 int RLIS::l_range_max_tree(Node *node, int l) {
@@ -158,9 +148,6 @@ vector<int> RLIS::l_range_max(
 void RLIS::preprocess_dp(ShortNode *node) {
     int start = node->start, mid = node->mid, end = node->end;
     node->LR = map<double, map<int, PatienceNode*>>();
-
-    // TODO: probably doing some accidental O(n) ops here
-    cout << "NODE MID " << node->mid << endl;
 
     // Compute B[r][beta] for all [n/2+1, r]
     map<double, map<int, PatienceNode*>> B;
@@ -248,15 +235,15 @@ void RLIS::preprocess_dp(ShortNode *node) {
             } else {
                 node->LR[alpha][l] = C[alpha][l];
             }
-            cout << "Setting LR[" << alpha << "][" << l << "] to ";
-            if (!node->LR[alpha][l])  {
-                cout << "NONE\n";
-            } else {
-                for (PatienceNode* ptr = node->LR[alpha][l]; ptr != nullptr; ptr = ptr->next) {
-                    cout << ptr->val << ",";
-                }
-                cout << endl;
-            }
+            // cout << "Setting LR[" << alpha << "][" << l << "] to ";
+            // if (!node->LR[alpha][l])  {
+            //     cout << "NONE\n";
+            // } else {
+            //     for (PatienceNode* ptr = node->LR[alpha][l]; ptr != nullptr; ptr = ptr->next) {
+            //         cout << ptr->val << ",";
+            //     }
+            //     cout << endl;
+            // }
         }
 
     }
@@ -291,9 +278,7 @@ int RLIS::compatible_beta(
 
 vector<int> RLIS::short_query(ShortNode *node, query_t q) {
     int i = q.first, j = q.second;
-    cout << "MAX ALPHA " << ceil(barrier) << endl;
     if (i <= node->mid && node->mid < j) {
-        cout << "MIDPT " << node->mid << "," << seq[node->mid] << endl;
         map<double, map<int, PatienceNode*>> LR = node->LR;
         // Alpha = 0
         int alpha = 0, beta = compatible_beta(LR, -1e5, q, node);
@@ -312,12 +297,10 @@ vector<int> RLIS::short_query(ShortNode *node, query_t q) {
                 longest_alpha_beta = ln;
             }
         }
-        cout << "SIZE 9 " << LR[9][i]->peak << endl;
         alpha = alpha_beta.first, beta = alpha_beta.second;
 
         vector<int> result;
         if (alpha != 0) {
-            cout << "PEAK " << LR[alpha][i]->peak << endl;
             for (PatienceNode *alpha_ptr = LR[alpha][i]; alpha_ptr != nullptr; alpha_ptr = alpha_ptr->next) {
                 result.push_back(alpha_ptr->val);
             }
