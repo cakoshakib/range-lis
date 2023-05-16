@@ -10,12 +10,10 @@ void RLIS::build_approx_tree(Node* node) {
     // Calculate LIS([i, n/2]) and LIS([n/2+1,j])
     vector<PatienceNode*> bcw = backward_lis(start, mid);
     for (int i = start; i <= mid; i++) {
-        cout << "Setting memo[" << i - start << "]" << " equal to " << bcw[i-start]->ln << endl;
         memo[i-start] = bcw[i-start]->ln;
     }
     vector<PatienceNode*> frw = forward_lis(mid+1, end);
     for (int j = mid+1; j <= end; j++) {
-        cout << "Setting memo[" << j - start << "]" << " equal to " << frw[j-mid-1]->ln << endl;
         memo[j-start] = frw[j-mid-1]->ln;
     }
     node->list = memo;
@@ -38,11 +36,9 @@ int RLIS::answer_approx_query(Node *node, int i, int j) {
 }
 
 query_map_t RLIS::two_approx() {
-    cout << "Performing two approximation\n";
     int n = seq.size();
 
     Node *root = new Node(0, n-1);
-    cout << "Building approximation tree\n";
     build_approx_tree(root);
 
     query_map_t approx;

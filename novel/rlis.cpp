@@ -32,7 +32,7 @@ vector<vector<int>> RLIS::run() {
     // Preprocess DP for short queries
     cout << "Preprocessing DP\n";
     ShortNode *root = new ShortNode(0, n-1);
-    // preprocess_dp(root);
+    preprocess_dp(root);
     cout << endl;
 
     // Get LIS for each query

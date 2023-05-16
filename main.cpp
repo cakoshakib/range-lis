@@ -29,24 +29,20 @@ int main() {
 
     cout << "----NOVEL----\n";
     RLIS rlis(sequence, queries);
-    // vector<PatienceNode*> res = rlis.backward_lis(0,9);
-    // for (int i = 0; i < res.size(); i++) {
-    //     cout << "res at i " << i << " length " << res[i]->ln << endl;
-    // }
     vector<vector<int>> rlis_result = rlis.run();
     print_result(queries, rlis_result);
     cout << "--------\n";
     
-    // cout << "----PRECOMPUTE----\n";
-    // LISPre pre(sequence, queries);
-    // vector<vector<int>> pre_result = pre.run();
-    // print_result(queries, pre_result);
-    // cout << "--------\n";
+    cout << "----PRECOMPUTE----\n";
+    LISPre pre(sequence, queries);
+    vector<vector<int>> pre_result = pre.run();
+    print_result(queries, pre_result);
+    cout << "--------\n";
 
-    // cout << "----LIVE----\n";
-    // LISLive live(sequence, queries);
-    // vector<vector<int>> live_result = live.run();
-    // print_result(queries, live_result);
-    // cout << "--------\n";
+    cout << "----LIVE----\n";
+    LISLive live(sequence, queries);
+    vector<vector<int>> live_result = live.run();
+    print_result(queries, live_result);
+    cout << "--------\n";
 
 }

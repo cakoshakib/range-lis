@@ -3,6 +3,7 @@
 class PatienceNode {
 public:
     int val, ln;
+    int base, peak;
     PatienceNode *next;
     PatienceNode(int val) {
         this->val = val;

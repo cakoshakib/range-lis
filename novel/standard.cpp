@@ -23,7 +23,6 @@ vector<PatienceNode*> RLIS::forward_lis(unsigned int lb, unsigned int ub) {
         cout << "Invalid parameters to forward_lis, j > i\n";
         exit(1);
     }
-    cout << "Entered forward LIS (" << lb << "," << ub << ")" << endl;
     vector<PatienceNode*> stack_tops;
     vector<PatienceNode*> res;
     for (unsigned int i = lb; i <= ub; i++) {
@@ -67,7 +66,6 @@ vector<PatienceNode*> RLIS::backward_lis(int lb, int ub) {
         cout << "Invalid parameters to forward_lis, j > i\n";
         exit(1);
     }
-    cout << "Entered backward LIS (" << lb << "," << ub << ")" << endl;
 
     vector<PatienceNode*> stack_tops;
     vector<PatienceNode*> res(ub-lb+1);

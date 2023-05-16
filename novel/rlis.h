@@ -40,7 +40,7 @@ class ShortNode {
 public:
     int mid, start, end;
     ShortNode *left, *right;
-    std::map<double, std::map<int, std::vector<int>>> LR;
+    std::map<double, std::map<int, PatienceNode*>> LR;
 
     ShortNode(int start, int end) {
         // Start, Mid, End of interval
@@ -91,12 +91,12 @@ private:
     std::vector<int> short_query(ShortNode *node, query_t q);
 
     int compatible_beta(
-        std::map<double, std::map<int, std::vector<int>>>& LR, 
+        std::map<double, std::map<int, PatienceNode*>>& LR, 
         int peak, 
         query_t q,
         ShortNode *node
     );
-    void r_range_tree(Node *node, std::map<int, std::vector<int>>& B);
+    void r_range_tree(Node *node, std::map<int, PatienceNode*>& B);
     std::vector<int> r_range_max(
         std::map<double, std::map<int, std::vector<int>>>& B,
         ShortNode *node,
@@ -105,7 +105,7 @@ private:
     );
     int r_range_max_tree(Node *node, int r);
 
-    void l_range_tree(Node *node, std::map<int, std::vector<int>>& C_alpha, unsigned int alpha);
+    void l_range_tree(Node *node, std::map<int, PatienceNode*>& C_alpha, int alpha);
     int l_range_max_tree(Node *node, int l);
 
     void l_range_tree(Node *node);

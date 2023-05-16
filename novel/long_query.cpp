@@ -23,7 +23,6 @@ map<int, vector<PatienceNode*>> RLIS::beta_sample(double beta) {
         // TODO: need to make this report the seq itself later
         vector<PatienceNode*> bcw = backward_lis(0, i);
         vector<PatienceNode*> frw = forward_lis(i, n-1);
-        cout << frw.size() + bcw.size() << endl;
         vector<PatienceNode*> sample_lis;
         sample_lis.reserve(bcw.size() + frw.size());
         sample_lis.insert(sample_lis.end(), bcw.begin(), bcw.end());
@@ -36,7 +35,6 @@ map<int, vector<PatienceNode*>> RLIS::beta_sample(double beta) {
 }
 
 vector<int> RLIS::long_query(query_t query, map<int, vector<PatienceNode*>> sample) {
-    cout << "Computing long query\n";
     int l = query.first, r = query.second;
 
     int longest = 0;
@@ -45,7 +43,6 @@ vector<int> RLIS::long_query(query_t query, map<int, vector<PatienceNode*>> samp
         // Check if this element in the range is a stitching element
         if (sample.find(i) != sample.end()) {
             if (sample[i][l]->ln + sample[i][r]->ln - 1 >= longest) {
-                cout << "Stitching element " << seq[i] << endl;
                 cout << sample[i].size() << endl;
                 lower_lis = sample[i][l];
                 upper_lis = sample[i][r];
@@ -66,10 +63,5 @@ vector<int> RLIS::long_query(query_t query, map<int, vector<PatienceNode*>> samp
     }
     reverse(lis.begin()+lower_ln, lis.end());
 
-    cout << "Long query (" << l << "," << r << ") result: " << " ";
-    for (int i = 0; i < lis.size(); i++) {
-        cout << lis[i] << ",";
-    }
-    cout << endl;
     return lis;
 }
