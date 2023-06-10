@@ -1,5 +1,5 @@
 OUTPUT=main
-CFLAGS=-g -Wall
+CFLAGS=-g -Wall -O3
 CFILES=main.cpp novel/*.cpp precompute/*.cpp live/*.cpp
 
 all: main

@@ -11,11 +11,6 @@ RLIS::RLIS(vector<int> _sequence, vector<query_t> _queries) {
 }
 
 vector<vector<int>> RLIS::run() {
-    cout << "SEQ: ";
-    for (int a_i : seq) {
-        cout << a_i << " ";
-    }
-    cout << "\n---\n";
     query_map_t approximation = two_approx();
 
     // Sample Betas
@@ -39,14 +34,14 @@ vector<vector<int>> RLIS::run() {
     vector<vector<int>> results;
     for (query_t q : queries) {
         int approx = approximation[q];
-        cout << "---\n";
-        cout << "Computing LIS of (" << q.first << "," << q.second << ")\n"; 
+        // cout << "---\n";
+        // cout << "Computing LIS of (" << q.first << "," << q.second << ")\n"; 
         if (2*approx > barrier) {
-            cout << "Long LIS!" << endl;
+            // cout << "Long LIS!" << endl;
             int beta_index = lower_bound(betas.begin(), betas.end(), approx) - betas.begin();
             results.push_back(long_query(q, samples[beta_index]));
         } else {
-            cout << "Small LIS!" << endl;
+            // cout << "Small LIS!" << endl;
             vector<int> result = short_query(root, q);
             results.push_back(result);
         }

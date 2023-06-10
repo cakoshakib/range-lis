@@ -45,7 +45,7 @@ query_map_t RLIS::two_approx() {
     for (query_t q : queries) {
         int i = q.first, j = q.second;
         approx[q] = answer_approx_query(root, i, j);
-        cout << "Query (" << i << "," << j << ") approximation: " << approx[q] << endl;
+        // cout << "Query (" << i << "," << j << ") approximation: " << approx[q] << endl;
     }
 
     return approx;
