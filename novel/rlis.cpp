@@ -11,6 +11,7 @@ RLIS::RLIS(vector<int> _sequence, vector<query_t> _queries) {
 }
 
 vector<vector<int>> RLIS::run() {
+    cout << "ENTERED" << endl;
     query_map_t approximation = two_approx();
 
     // Sample Betas

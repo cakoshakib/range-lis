@@ -18,7 +18,7 @@ void RLIS::build_approx_tree(Node* node) {
     }
     node->list = memo;
 
-    if (mid+1 == end) return;
+    if (mid+1 >= end) return;
 
     node->left = new Node(start, mid);
     node->right = new Node(mid+1, end);
@@ -26,7 +26,7 @@ void RLIS::build_approx_tree(Node* node) {
 }
 
 int RLIS::answer_approx_query(Node *node, int i, int j) {
-    if (i <= node->mid && node->mid < j) {
+    if (i <= node->mid && node->mid <= j) {
         return max(node->list[i-node->start], node->list[j-node->start]);
     } else if (j <= node->mid) {
         return answer_approx_query(node->left, i, j);

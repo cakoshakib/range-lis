@@ -2,3 +2,4 @@
 main
 .ccls
 .vscode
+*.txt

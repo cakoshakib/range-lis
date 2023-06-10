@@ -49,7 +49,7 @@ int RLIS::r_range_max_tree(Node *node, int r) {
     return ret;
 }
 
-void RLIS::l_range_tree(Node *node, map<int, PatienceNode*>& C_alpha, int alpha) {
+void RLIS::l_range_tree(Node *node, map<int, PatienceNode*>& C_alpha) {
     // Construct tree that allows for log(n) l_range_max computation
     // need the minimum peak 
     int start = node->start, mid = node->mid, end = node->end;
@@ -59,24 +59,23 @@ void RLIS::l_range_tree(Node *node, map<int, PatienceNode*>& C_alpha, int alpha)
     for (int i = mid; i <= end; i++) sorted_seq.push_back({seq[i], i});
     sort(sorted_seq.begin(), sorted_seq.end());
 
-    for (int i = 0; i <= end-mid; i++) {
-        if (mid == 46 && end == 49) {
-            cout << "SUS" << sorted_seq[i].second << endl;
-        }
+    for (int i = end-mid; i >= 0; i--) {
         int index = sorted_seq[i].second;
         if (!C_alpha[index]) continue;
-        if (node->l1.size() == 0 || C_alpha[index]->peak >= node->l1[node->l1.size()-1]) {
+        if (node->l1.size() == 0 || C_alpha[index]->peak <= node->l1[node->l1.size()-1]) {
             node->l1.push_back(C_alpha[index]->peak);
             node->l2.push_back(sorted_seq[i]);
         }
     }
+    reverse(node->l1.begin(), node->l1.end());
+    reverse(node->l2.begin(), node->l2.end());
 
     // recurse
     if (mid+1 > end) return;
     node->left = new Node(start, mid);
     node->right = new Node(mid+1, end);
-    l_range_tree(node->right, C_alpha, alpha);
-    l_range_tree(node->left, C_alpha, alpha);
+    l_range_tree(node->right, C_alpha);
+    l_range_tree(node->left, C_alpha);
 }
 
 int RLIS::l_range_max_tree(Node *node, int l) {
@@ -88,9 +87,10 @@ int RLIS::l_range_max_tree(Node *node, int l) {
             pair<int,int> x = {seq[l], -1e9};
             unsigned int i = upper_bound(node->l2.begin(), node->l2.end(), x) - node->l2.begin();
             cout << "RANGE (" << node->mid << "," << node->end << ")" << " Y " << i << endl;
-            if (node->l2.size() != 0) {
-                cout << node->l2[node->l2.size() - 1].first << endl;
+            for (int x = 0; x < node->l2.size(); x++) {
+                cout << node->l2[x].second << ",";
             }
+            cout << endl;
             
             if (i != node->l1.size() && node->l1[i] < min_peak) {
                 min_peak = node->l1[i];
@@ -173,7 +173,7 @@ void RLIS::preprocess_dp(ShortNode *node) {
     for (int alpha = 1; alpha < ceil(barrier); alpha++) {
         Node *mn_tree = new Node(start, mid);
         if (alpha > 1) 
-            l_range_tree(mn_tree, C[alpha-1], alpha-1);
+            l_range_tree(mn_tree, C[alpha-1]);
         for (int l = mid; l >= start; l--) {
             int a_l = seq[l];
             cout << "seq[" << l << "]" << "=" << a_l << endl;

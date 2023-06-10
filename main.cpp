@@ -9,9 +9,9 @@ void print_result(vector<query_t>& queries, vector<vector<int>>& res) {
     for (unsigned int i = 0; i < queries.size(); i++) {
         cout << "Query (" << queries[i].first << "," << queries[i].second << ") ";
         cout << res[i].size() << ": ";
-        for (int x : res[i]) {
-             cout << x << " ";
-        }
+        // for (int x : res[i]) {
+        //      cout << x << " ";
+        // }
         cout << endl;
     }
 }

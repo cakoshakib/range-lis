@@ -105,7 +105,7 @@ private:
     );
     int r_range_max_tree(Node *node, int r);
 
-    void l_range_tree(Node *node, std::map<int, PatienceNode*>& C_alpha, int alpha);
+    void l_range_tree(Node *node, std::map<int, PatienceNode*>& C_alpha);
     int l_range_max_tree(Node *node, int l);
 
     void l_range_tree(Node *node);
