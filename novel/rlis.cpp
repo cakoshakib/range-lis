@@ -11,11 +11,10 @@ RLIS::RLIS(vector<int> _sequence, vector<query_t> _queries) {
 }
 
 vector<vector<int>> RLIS::run() {
-    cout << "ENTERED" << endl;
     query_map_t approximation = two_approx();
 
     // Sample Betas
-    cout << "Computing Beta Samples\n";
+    // cout << "Computing Beta Samples\n";
     vector<double> betas;
     vector<map<int, vector<PatienceNode*>>> samples;
     for (int i = 0; i < log(n); i++) {
@@ -23,13 +22,13 @@ vector<vector<int>> RLIS::run() {
         betas.push_back(beta_i);
         samples.push_back(beta_sample(beta_i));
     }
-    cout << endl;
+    // cout << endl;
 
     // Preprocess DP for short queries
-    cout << "Preprocessing DP\n";
+    // cout << "Preprocessing DP\n";
     ShortNode *root = new ShortNode(0, n-1);
     preprocess_dp(root);
-    cout << endl;
+    // cout << endl;
 
     // Get LIS for each query
     vector<vector<int>> results;

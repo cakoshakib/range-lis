@@ -82,15 +82,10 @@ int RLIS::l_range_max_tree(Node *node, int l) {
     int ret = -1;
     int min_peak = 1e5;
     while (node != nullptr) {
-        cout << "RANGE (" << node->mid << "," << node->end << ")" << " Y " << endl;
         if (node->mid > l) {
             pair<int,int> x = {seq[l], -1e9};
             unsigned int i = upper_bound(node->l2.begin(), node->l2.end(), x) - node->l2.begin();
-            cout << "RANGE (" << node->mid << "," << node->end << ")" << " Y " << i << endl;
-            for (int x = 0; x < node->l2.size(); x++) {
-                cout << node->l2[x].second << ",";
-            }
-            cout << endl;
+            // cout << "RANGE (" << node->mid << "," << node->end << ")" << " Y " << i << endl;
             
             if (i != node->l1.size() && node->l1[i] < min_peak) {
                 min_peak = node->l1[i];
@@ -107,7 +102,7 @@ int RLIS::l_range_max_tree(Node *node, int l) {
 void RLIS::preprocess_dp(ShortNode *node) {
     int start = node->start, mid = node->mid, end = node->end;
     node->LR = map<double, map<int, PatienceNode*>>();
-    cout << "MID " << mid << endl;
+    // cout << "MID " << mid << endl;
 
     // Compute B[r][beta] for all [n/2+1, r]
     map<double, map<int, PatienceNode*>> B;
@@ -176,7 +171,6 @@ void RLIS::preprocess_dp(ShortNode *node) {
             l_range_tree(mn_tree, C[alpha-1]);
         for (int l = mid; l >= start; l--) {
             int a_l = seq[l];
-            cout << "seq[" << l << "]" << "=" << a_l << endl;
             // C[alpha][l].resize(alpha);
             // node->LR[alpha][l].resize(alpha);
             if (alpha == 1) {
@@ -185,7 +179,6 @@ void RLIS::preprocess_dp(ShortNode *node) {
                 C[alpha][l]->peak = a_l;
             } else {
                 int i = l_range_max_tree(mn_tree, l);
-                cout << "I " << i << endl;
 
                 if (i == -1) {
                     C[alpha][l] = nullptr;
@@ -196,15 +189,15 @@ void RLIS::preprocess_dp(ShortNode *node) {
                     C[alpha][l]->base = a_l;
                     C[alpha][l]->peak = C[alpha-1][i]->peak;
                 }
-                cout << "Setting C[" << alpha << "][" << l << "] to ";
-                if (!C[alpha][l])  {
-                    cout << "NONE\n";
-                } else {
-                    for (PatienceNode* ptr = C[alpha][l]; ptr != nullptr; ptr = ptr->next) {
-                        cout << ptr->val << ",";
-                    }
-                    cout << endl;
-                }
+                // cout << "Setting C[" << alpha << "][" << l << "] to ";
+                // if (!C[alpha][l])  {
+                //     cout << "NONE\n";
+                // } else {
+                //     for (PatienceNode* ptr = C[alpha][l]; ptr != nullptr; ptr = ptr->next) {
+                //         cout << ptr->val << ",";
+                //     }
+                //     cout << endl;
+                // }
 
             }
 
@@ -218,15 +211,15 @@ void RLIS::preprocess_dp(ShortNode *node) {
                 node->LR[alpha][l] = C[alpha][l];
             }
 
-            cout << "Setting LR[" << alpha << "][" << l << "] to ";
-            if (!node->LR[alpha][l])  {
-                cout << "NONE\n";
-            } else {
-                for (PatienceNode* ptr = node->LR[alpha][l]; ptr != nullptr; ptr = ptr->next) {
-                    cout << ptr->val << ",";
-                }
-                cout << endl;
-            }
+            // cout << "Setting LR[" << alpha << "][" << l << "] to ";
+            // if (!node->LR[alpha][l])  {
+            //     cout << "NONE\n";
+            // } else {
+            //     for (PatienceNode* ptr = node->LR[alpha][l]; ptr != nullptr; ptr = ptr->next) {
+            //         cout << ptr->val << ",";
+            //     }
+            //     cout << endl;
+            // }
             
         }
 
@@ -262,11 +255,7 @@ int RLIS::compatible_beta(
 
 vector<int> RLIS::short_query(ShortNode *node, query_t q) {
     int i = q.first, j = q.second;
-    cout << "COMPUTING (" << i << "," << j << ")" << endl;
-    cout << node->start << " " << node->mid << " " << node->end << endl;
     if (i <= node->mid && node->mid <= j) {
-        cout << node->start << endl;
-        cout << node->end << endl;
         map<double, map<int, PatienceNode*>> LR = node->LR;
         // Alpha = 0
         int alpha = 0, beta = compatible_beta(LR, -1e5, q, node);

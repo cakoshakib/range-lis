@@ -43,7 +43,6 @@ vector<int> RLIS::long_query(query_t query, map<int, vector<PatienceNode*>> samp
         // Check if this element in the range is a stitching element
         if (sample.find(i) != sample.end()) {
             if (sample[i][l]->ln + sample[i][r]->ln - 1 >= longest) {
-                cout << sample[i].size() << endl;
                 lower_lis = sample[i][l];
                 upper_lis = sample[i][r];
                 longest = lower_lis->ln + upper_lis->ln - 1;
