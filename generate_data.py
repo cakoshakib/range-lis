@@ -1,7 +1,7 @@
 import random 
 
-n = 1000
-qs = 50
+n = 10000
+qs = 5000
 print(n, qs)
 a = [i for i in range(n)]
 random.shuffle(a)
